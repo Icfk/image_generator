@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600">
+  <rect width="960" height="600" fill="#eef4fb"/>
+  <circle cx="480" cy="260" r="135" fill="#d6e5f8"/>
+  <path d="M320 350 430 210 505 300 565 245 650 350Z" fill="#1769e0"/>
+  <circle cx="550" cy="180" r="26" fill="#f7bd51"/>
+  <text x="480" y="445" text-anchor="middle" fill="#17212b" font-family="sans-serif" font-size="32">Mock generation complete</text>
+  <text x="480" y="487" text-anchor="middle" fill="#536779" font-family="sans-serif" font-size="20">Local demo asset · no paid provider calls</text>
+</svg>

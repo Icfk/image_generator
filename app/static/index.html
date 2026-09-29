@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Generator</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/interface.css" />
+  </head>
+  <body>
+    <aside class="studio-sidebar" aria-label="О приложении">
+      <a class="studio-brand" href="/" aria-label="Content Lab — главная"
+        ><span class="brand-symbol">✦</span> content<span>lab</span></a
+      >
+      <div class="sidebar-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>
+      <div class="sidebar-current">
+        <span aria-hidden="true">◈</span> Студия генерации
+      </div>
+      <div class="sidebar-note">
+        <span class="eyebrow">От идеи к результату</span>
+        <h2>Создавайте.<br />Пробуйте.<br />Вдохновляйтесь.</h2>
+        <p>Изображения и видео в одном рабочем пространстве.</p>
+        <div class="sidebar-art" aria-hidden="true">✳</div>
+      </div>
+      <div class="sidebar-footer">
+        CONTENT LAB <span>Creative workspace</span>
+      </div>
+    </aside>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">СТУДИЯ / СОЗДАНИЕ КОНТЕНТА</span>
+          <h1>Генератор контента</h1>
+          <p class="page-subtitle">
+            Ваша идея. Несколько слов. Новый визуальный мир.
+          </p>
+        </div>
+        <div id="connection" class="connection offline">Не подключено</div>
+      </header>
+      <p id="mode-notice" class="notice" role="status">
+        Определяем режим приложения…
+      </p>
+
+      <section id="auth-card" class="card auth-card">
+        <div class="auth-symbol" aria-hidden="true">✦</div>
+        <div class="card-heading">
+          <div>
+            <span class="eyebrow">Доступ</span>
+            <h2>Подключить аккаунт</h2>
+          </div>
+        </div>
+        <p class="muted">
+          Для демо можно создать нового пользователя или вставить уже выданный
+          API-ключ.
+        </p>
+        <div class="actions">
+          <button id="create-user" class="button primary">
+            Создать пользователя
+          </button>
+        </div>
+        <label
+          >API-ключ<input
+            id="api-key"
+            type="password"
+            placeholder="Введите X-API-Key"
+        /></label>
+        <button id="connect" class="button secondary">Подключиться</button>
+        <p class="auth-footnote">
+          Ключ сохраняется только в этом браузере. Используйте личное
+          устройство.
+        </p>
+        <div id="new-user" class="notice hidden"></div>
+      </section>
+
+      <section id="app-card" class="hidden">
+        <div class="stats-grid">
+          <div class="stat card">
+            <span class="eyebrow">Баланс</span><strong id="balance">—</strong
+            ><span class="muted">условных токенов</span>
+          </div>
+          <div class="stat card">
+            <span class="eyebrow">Пользователь</span
+            ><strong id="user-id">—</strong
+            ><span class="muted">external user id</span>
+          </div>
+          <div class="stat card">
+            <span class="eyebrow">Провайдер</span
+            ><strong id="provider-name">—</strong
+            ><span id="provider-mode" class="muted"></span>
+          </div>
+        </div>
+
+        <div class="workspace">
+          <section class="card form-card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">Новая задача</span>
+                <h2>Создать генерацию</h2>
+              </div>
+            </div>
+            <label
+              >Режим<select id="generation-mode">
+                <option value="text-to-image">Текст → изображение</option>
+                <option value="image-to-image">
+                  Изображение + текст → изображение
+                </option>
+                <option value="text-to-video">Текст → видео</option>
+                <option value="image-to-video">
+                  Изображение + текст → видео
+                </option>
+              </select></label
+            >
+            <label
+              >Промпт<textarea
+                id="prompt"
+                rows="5"
+                maxlength="4000"
+                placeholder="Например: кинематографичный красный лис в заснеженном лесу"
+              ></textarea>
+            </label>
+            <label id="image-source" class="hidden"
+              >Изображение-источник
+              <span class="optional">обязательно для этого режима</span
+              ><input id="image-url" type="url" placeholder="https://..."
+            /></label>
+            <label
+              >Webhook URL <span class="optional">необязательно</span
+              ><input
+                id="webhook-url"
+                placeholder="https://your-app.example/webhook"
+            /></label>
+            <button id="generate" class="button primary wide">
+              Запустить генерацию <span>→</span>
+            </button>
+            <button id="new-task" class="button secondary wide hidden">
+              Новая задача
+            </button>
+            <div
+              id="form-message"
+              class="form-message"
+              role="status"
+              aria-live="polite"
+            ></div>
+          </section>
+
+          <section class="card result-card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">Результат</span>
+                <h2>Статус задачи</h2>
+              </div>
+              <span id="status-pill" class="pill">Нет задачи</span>
+            </div>
+            <div id="empty-result" class="empty">
+              <div class="empty-icon">✦</div>
+              <h3>Здесь начинается ваша идея</h3>
+              <p>
+                Опишите, что хотите создать.<br />Готовый результат появится в
+                этом окне.
+              </p>
+              <span class="empty-caption">ИЗОБРАЖЕНИЯ · ВИДЕО</span>
+            </div>
+            <div id="result" class="hidden">
+              <div class="task-id" id="task-id"></div>
+              <div id="progress" class="progress"><span></span></div>
+              <p id="status-text" class="muted" aria-live="polite"></p>
+              <img
+                id="image-preview"
+                class="preview hidden"
+                alt="Результат генерации"
+              /><video
+                id="video-preview"
+                class="preview hidden"
+                controls
+                preload="metadata"
+              ></video
+              ><a
+                id="result-link"
+                class="result-link hidden"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Открыть результат →</a
+              >
+              <pre id="error-box" class="error hidden"></pre>
+            </div>
+          </section>
+        </div>
+
+        <section id="topup-card" class="card topup-card hidden">
+          <div>
+            <span class="eyebrow">Только локальное демо · не оплата</span>
+            <h2>Пополнить баланс</h2>
+          </div>
+          <div class="topup-controls">
+            <input
+              id="topup-transaction"
+              type="text"
+              maxlength="192"
+              placeholder="ID платежа"
+              aria-label="ID платежа"
+              required
+            /><input
+              id="topup-amount"
+              type="number"
+              min="1"
+              max="1000000"
+              value="10"
+              aria-label="Сумма пополнения"
+            /><button id="topup" class="button secondary">Пополнить</button>
+          </div>
+        </section>
+        <button id="logout" class="logout">Сменить API-ключ</button>
+      </section>
+    </main>
+    <script type="module" src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "content-lab-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/frontend/client-state.test.mjs",
+    "test:e2e": "playwright test",
+    "format": "prettier --write 'app/static/*.{js,css,html}' 'tests/frontend/*.mjs' playwright.config.mjs",
+    "format:check": "prettier --check 'app/static/*.{js,css,html}' 'tests/frontend/*.mjs' playwright.config.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "prettier": "^3.9.9"
+  }
+}

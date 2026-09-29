@@ -1,0 +1,66 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    ports: ["127.0.0.1:8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+  worker:
+    build: .
+    env_file: .env
+    command: arq app.worker.WorkerSettings
+    expose: ["8002"]
+    restart: unless-stopped
+    depends_on:
+      api: {condition: service_healthy}
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+  recovery:
+    build: .
+    env_file: .env
+    command: python -m app.recovery_worker
+    restart: unless-stopped
+    expose: ["8001"]
+    depends_on:
+      api: {condition: service_healthy}
+      db: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.recovery_worker", "--healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: content
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    volumes: [pgdata:/var/lib/postgresql/data]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d content"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  pgdata:
+  redisdata:
